@@ -1107,7 +1107,7 @@ export class NPCFactory {
         }
 
         actorUpdate["data.details.raceAndGrafts"] =
-            actor.data.data.details.raceAndGrafts + " " + graft.name
+            actor.system.details.raceAndGrafts + " " + graft.name
 
         // Update actor
         await actor.update(actorUpdate)
@@ -1502,7 +1502,7 @@ export class NPCFactory {
 
         // Append subtype graft to graft list
         actorUpdate["data.details.raceAndGrafts"] =
-            actor.data.data.details.raceAndGrafts + ", " + graft.name
+            actor.system.details.raceAndGrafts + ", " + graft.name
 
         // Update actor
         await actor.update(actorUpdate)

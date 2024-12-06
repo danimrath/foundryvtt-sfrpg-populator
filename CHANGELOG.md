@@ -1,3 +1,7 @@
+### 0.4.8
+### Changed
+Update references to actor.data
+
 ### 0.4.7
 ### Changed
 Change dynamic images game setting to Boolean/Checkbox

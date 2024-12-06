@@ -13,7 +13,7 @@ export default class MutationAdjuster {
             monsterReferenceSymbol = MonsterReferenceSymbol[context.monsterReferenceSymbol];
         }
         // Current CR (`number`, 1/3 = `0.3333~`, 1/2 = `0.5`, etc)
-        const currentCRNumber = actor.data.data.details.cr;
+        const currentCRNumber = actor.system.details.cr;
         let currentCR = Utils.CRforNumber(currentCRNumber);
         let targetCR = context.CR;
         const approximateCurrentMainRow = MonsterCreation.arrays[monsterReferenceSymbol].main[currentCR];
@@ -26,20 +26,20 @@ export default class MutationAdjuster {
         output.push(["Set CR to " + context.CR, ""]);
         // Set new HP
         const hpDiff = this.diffOf("HP", approximateCurrentMainRow, targetMainRow);
-        const newHPValue = actor.data.data.attributes.hp.max + hpDiff;
+        const newHPValue = actor.system.attributes.hp.max + hpDiff;
         actorUpdate["system.attributes.hp.max"] = newHPValue;
         actorUpdate["system.attributes.hp.value"] = newHPValue;
         output.push(["Set HP to " + newHPValue, ""]);
         // Set new KAC
-        this.applyDiffForKey("KAC", actor.data.data.attributes.kac.value, "system.attributes.kac.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
+        this.applyDiffForKey("KAC", actor.system.attributes.kac.value, "system.attributes.kac.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
         // Set new EAC
-        this.applyDiffForKey("EAC", actor.data.data.attributes.eac.value, "system.attributes.eac.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
+        this.applyDiffForKey("EAC", actor.system.attributes.eac.value, "system.attributes.eac.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
         // Fort
-        this.applyDiffForKey("fort", actor.data.data.attributes.fort.bonus, "system.attributes.fort.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
+        this.applyDiffForKey("fort", actor.system.attributes.fort.bonus, "system.attributes.fort.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
         // Reflex
-        this.applyDiffForKey("reflex", actor.data.data.attributes.reflex.bonus, "system.attributes.reflex.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
+        this.applyDiffForKey("reflex", actor.system.attributes.reflex.bonus, "system.attributes.reflex.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
         // Will
-        this.applyDiffForKey("will", actor.data.data.attributes.will.bonus, "system.attributes.will.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
+        this.applyDiffForKey("will", actor.system.attributes.will.bonus, "system.attributes.will.base", approximateCurrentMainRow, targetMainRow, actorUpdate, output);
         // Ability Scores
         this.applyAbilityScoreDiffAndInit(actor, approximateCurrentMainRow, targetMainRow, actorUpdate, output);
         // Update actor
@@ -75,7 +75,7 @@ export default class MutationAdjuster {
             let abilityScoreKey = AbilityScore[abilityScore];
             abilityTuples.push([
                 abilityScoreKey,
-                actor.data.data.abilities[abilityScoreKey].mod
+                actor.system.abilities[abilityScoreKey].mod
             ]);
         }
         // Sort ability scores
@@ -87,12 +87,12 @@ export default class MutationAdjuster {
         // Applied to top three abilities
         for (let i = 0; i < 3; i++) {
             const abilityKey = abilityTuples[i][0];
-            const existingMod = actor.data.data.abilities[abilityKey].mod;
+            const existingMod = actor.system.abilities[abilityKey].mod;
             const newAbilityMod = existingMod + abilityDiffs[i];
             // Apply new initiative
             // If we've touched dex mod, set init to match
             if (abilityKey === AbilityScore.dexterity) {
-                const currentInitiative = actor.data.data.attributes.init.total;
+                const currentInitiative = actor.system.attributes.init.total;
                 const newInititatve = currentInitiative + abilityDiffs[i];
                 actorUpdate["system.attributes.init.total"] = newInititatve;
                 output.push([

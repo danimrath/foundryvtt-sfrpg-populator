@@ -25,7 +25,7 @@ export default class MutationAdjuster implements IApplyable {
         }        
 
         // Current CR (`number`, 1/3 = `0.3333~`, 1/2 = `0.5`, etc)
-        const currentCRNumber = actor.data.data.details.cr
+        const currentCRNumber = actor.system.details.cr
         let currentCR = Utils.CRforNumber(currentCRNumber)
         let targetCR = context.CR
 
@@ -48,7 +48,7 @@ export default class MutationAdjuster implements IApplyable {
             approximateCurrentMainRow,
             targetMainRow
         )
-        const newHPValue = actor.data.data.attributes.hp.max + hpDiff
+        const newHPValue = actor.system.attributes.hp.max + hpDiff
         actorUpdate["system.attributes.hp.max"] = newHPValue
         actorUpdate["system.attributes.hp.value"] = newHPValue
         output.push(["Set HP to " + newHPValue, ""])
@@ -56,7 +56,7 @@ export default class MutationAdjuster implements IApplyable {
         // Set new KAC
         this.applyDiffForKey(
             "KAC",
-            actor.data.data.attributes.kac.value,
+            actor.system.attributes.kac.value,
             "system.attributes.kac.base",
             approximateCurrentMainRow,
             targetMainRow,
@@ -67,7 +67,7 @@ export default class MutationAdjuster implements IApplyable {
         // Set new EAC
         this.applyDiffForKey(
             "EAC",
-            actor.data.data.attributes.eac.value,
+            actor.system.attributes.eac.value,
             "system.attributes.eac.base",
             approximateCurrentMainRow,
             targetMainRow,
@@ -78,7 +78,7 @@ export default class MutationAdjuster implements IApplyable {
         // Fort
         this.applyDiffForKey(
             "fort",
-            actor.data.data.attributes.fort.bonus,
+            actor.system.attributes.fort.bonus,
             "system.attributes.fort.base",
             approximateCurrentMainRow,
             targetMainRow,
@@ -89,7 +89,7 @@ export default class MutationAdjuster implements IApplyable {
         // Reflex
         this.applyDiffForKey(
             "reflex",
-            actor.data.data.attributes.reflex.bonus,
+            actor.system.attributes.reflex.bonus,
             "system.attributes.reflex.base",
             approximateCurrentMainRow,
             targetMainRow,
@@ -100,7 +100,7 @@ export default class MutationAdjuster implements IApplyable {
         // Will
         this.applyDiffForKey(
             "will",
-            actor.data.data.attributes.will.bonus,
+            actor.system.attributes.will.bonus,
             "system.attributes.will.base",
             approximateCurrentMainRow,
             targetMainRow,
@@ -170,7 +170,7 @@ export default class MutationAdjuster implements IApplyable {
 
             abilityTuples.push([
                 abilityScoreKey,
-                actor.data.data.abilities[abilityScoreKey].mod
+                actor.system.abilities[abilityScoreKey].mod
             ])
         }
 
@@ -183,13 +183,13 @@ export default class MutationAdjuster implements IApplyable {
         // Applied to top three abilities
         for (let i = 0; i < 3; i++) {
             const abilityKey = abilityTuples[i][0]
-            const existingMod = actor.data.data.abilities[abilityKey].mod
+            const existingMod = actor.system.abilities[abilityKey].mod
             const newAbilityMod = existingMod + abilityDiffs[i]
 
             // Apply new initiative
             // If we've touched dex mod, set init to match
             if (abilityKey === AbilityScore.dexterity) {
-                const currentInitiative = actor.data.data.attributes.init.total
+                const currentInitiative = actor.system.attributes.init.total
                 const newInititatve = currentInitiative + abilityDiffs[i]
                 actorUpdate["system.attributes.init.total"] = newInititatve
                 output.push([
